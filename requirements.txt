@@ -1,0 +1,8 @@
+streamlit>=1.32.0
+google-generativeai
+reportlab
+pillow
+python-dotenv
+requests
+openpyxl
+ezdxf

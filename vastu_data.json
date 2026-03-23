@@ -1,0 +1,197 @@
+{
+  "directions": {
+    "N": {"deity": "Kubera", "element": "Water", "meaning": "Wealth and Career", "colors": ["#E0F7FA", "#B2EBF2", "#80DEEA", "#4DD0E1", "#26C6DA"]},
+    "NE": {"deity": "Ishanya", "element": "Water", "meaning": "Wisdom and Spirituality", "colors": ["#FFF9C4", "#FFF59D", "#FFF176", "#FFEE58", "#FFEB3B"]},
+    "E": {"deity": "Indra", "element": "Air", "meaning": "Health and Prosperity", "colors": ["#F1F8E9", "#DCEDC8", "#C5E1A5", "#AED581", "#9CCC65"]},
+    "SE": {"deity": "Agni", "element": "Fire", "meaning": "Energy and Vigor", "colors": ["#FFEBEE", "#FFCDD2", "#EF9A9A", "#E57373", "#EF5350"]},
+    "S": {"deity": "Yama", "element": "Earth", "meaning": "Fame and Relaxation", "colors": ["#FFF3E0", "#FFE0B2", "#FFCC80", "#FFB74D", "#FFA726"]},
+    "SW": {"deity": "Nairuti", "element": "Earth", "meaning": "Stability and Strength", "colors": ["#EFEBE9", "#D7CCC8", "#BCAAA4", "#A1887F", "#8D6E63"]},
+    "W": {"deity": "Varuna", "element": "Space", "meaning": "Gains and Profit", "colors": ["#ECEFF1", "#CFD8DC", "#B0BEC5", "#90A4AE", "#78909C"]},
+    "NW": {"deity": "Vayu", "element": "Air", "meaning": "Support and Travel", "colors": ["#F3E5F5", "#E1BEE7", "#CE93D8", "#BA68C8", "#AB47BC"]}
+  },
+  "room_rules": {
+    "master_bedroom": {
+      "ideal": ["SW", "S"],
+      "acceptable": ["W", "NW"],
+      "avoid": ["N", "E", "SE"],
+      "forbidden": ["NE"],
+      "tip": "Ensure the bed is in the South or West, head pointing South.",
+      "element": "Earth",
+      "remedies": {
+        "NE": "Place a brass Vastu pyramid in SW corner. Paint walls cream or ivory. Sleep with head towards South."
+      }
+    },
+    "kitchen": {
+      "ideal": ["SE"],
+      "acceptable": ["NW", "E"],
+      "avoid": ["N", "S", "W"],
+      "forbidden": ["NE", "SW"],
+      "tip": "Face East while cooking.",
+      "element": "Fire",
+      "remedies": {
+        "NE": "Place a Jupiter yantra. Avoid placing sink and stove together. Paint walls yellow.",
+        "SW": "Keep heavy items in the South/West of the kitchen. Paint walls earthy colors. Place a Vastu pyramid."
+      }
+    },
+    "puja_room": {
+      "ideal": ["NE", "E", "N"],
+      "acceptable": ["W", "NW"],
+      "avoid": ["SE"],
+      "forbidden": ["S", "SW"],
+      "tip": "Face East or North while praying.",
+      "element": "Water",
+      "remedies": {
+        "S": "Ensure the idol doesn't face North. Add bright lighting. Place a copper wind chime.",
+        "SW": "Place a Rahu yantra. Keep the area extremely clean. Use light yellow colors."
+      }
+    },
+    "main_entrance": {
+      "ideal": ["NE", "E", "N"],
+      "acceptable": ["NW", "SE", "W"],
+      "avoid": ["S"],
+      "forbidden": ["SW"],
+      "tip": "Keep the entrance well-lit and clutter-free.",
+      "element": "Space",
+      "remedies": {
+        "SW": "Place a pair of lead metal blocks at the entrance. Hang a Bagua mirror outside. Paint door red or dark brown."
+      }
+    },
+    "toilet_bathroom": {
+      "ideal": ["NW", "W"],
+      "acceptable": ["S", "SE"],
+      "avoid": ["E", "N"],
+      "forbidden": ["NE", "SW"],
+      "tip": "Ensure toilet seat faces North or South.",
+      "element": "Water",
+      "remedies": {
+        "NE": "Keep a bowl of sea salt. Hang a Vastu zinc pyramid on the door. Keep door closed.",
+        "SW": "Use earthen colors in bathroom. Keep plants outside the bathroom. Install bright lights."
+      }
+    },
+    "living_room": {
+      "ideal": ["N", "NE", "E", "NW"],
+      "acceptable": ["W", "S"],
+      "avoid": ["SE"],
+      "forbidden": ["SW"],
+      "tip": "Place heavy furniture in West or South.",
+      "element": "Air",
+      "remedies": {
+        "SW": "Keep the SW corner heavy. Avoid seating guests in the SW corner. Add indoor plants."
+      }
+    },
+    "staircase": {
+      "ideal": ["S", "SW", "W"],
+      "acceptable": ["SE", "NW"],
+      "avoid": ["E", "N"],
+      "forbidden": ["NE", "CENTER"],
+      "tip": "Stairs should turn clockwise.",
+      "element": "Earth",
+      "remedies": {
+        "NE": "Paint the staircase in light colors. Place a brass tortoise at the bottom. Keep it well-lit.",
+        "CENTER": "Suspend a copper helix from the ceiling. Place crystals on steps. Do not keep space under stairs dark."
+      }
+    },
+    "children_bedroom": {
+      "ideal": ["W", "NW", "E"],
+      "acceptable": ["S", "N"],
+      "avoid": ["SE"],
+      "forbidden": ["SW", "NE"],
+      "tip": "Study table should face East or North.",
+      "element": "Air",
+      "remedies": {
+        "SW": "Use calming green colors. Place a lead pyramid. Avoid violent posters.",
+        "NE": "Place a water feature in N/NE of the room. Keep study desk in East. Use yellow shades."
+      }
+    },
+    "store_room": {
+      "ideal": ["NW", "SW"],
+      "acceptable": ["W", "S"],
+      "avoid": ["E", "N"],
+      "forbidden": ["NE"],
+      "tip": "Do not sleep in a store room.",
+      "element": "Earth",
+      "remedies": {
+        "NE": "Clear clutter immediately. Keep small transparent crystals. Ensure bright lighting."
+      }
+    },
+    "study_room": {
+      "ideal": ["NE", "E", "N", "W"],
+      "acceptable": ["NW"],
+      "avoid": ["S", "SE"],
+      "forbidden": ["SW"],
+      "tip": "Face East or North while studying.",
+      "element": "Water",
+      "remedies": {
+        "SW": "Study facing North. Sit in the NE corner of the room. Use light blue colors."
+      }
+    },
+    "dining_room": {
+      "ideal": ["W", "E"],
+      "acceptable": ["N", "S", "NW"],
+      "avoid": ["SE"],
+      "forbidden": ["SW"],
+      "tip": "Face East, North, or West while eating.",
+      "element": "Fire",
+      "remedies": {
+        "SW": "Place a mirror on the East or North wall. Use orange or light red elements. Hang a copper wind chime."
+      }
+    },
+    "guest_bedroom": {
+      "ideal": ["NW"],
+      "acceptable": ["S", "W"],
+      "avoid": ["SE", "NE"],
+      "forbidden": ["SW"],
+      "tip": "Keep the room airy and welcoming.",
+      "element": "Air",
+      "remedies": {
+        "SW": "Use metallic decor elements. Avoid heavy dark furniture. Paint walls ivory."
+      }
+    },
+    "home_office": {
+      "ideal": ["W", "S", "SW"],
+      "acceptable": ["NW", "N", "E"],
+      "avoid": ["SE"],
+      "forbidden": ["NE"],
+      "tip": "Sit facing North or East.",
+      "element": "Earth",
+      "remedies": {
+        "NE": "Place a crystal pyramid on the desk. Ensure an open layout. Use green shades."
+      }
+    },
+    "garage": {
+      "ideal": ["NW", "SE"],
+      "acceptable": ["E", "S"],
+      "avoid": ["N", "W"],
+      "forbidden": ["NE", "SW"],
+      "tip": "Park vehicles facing North or East.",
+      "element": "Space",
+      "remedies": {
+        "NE": "Keep garage spotlessly clean. Park slightly away from the NE wall. Paint in white or cream.",
+        "SW": "Install a heavy metal door. Make sure the floor slopes towards the North or East."
+      }
+    }
+  },
+  "plot_shapes": {
+    "square": {"rating": "ideal", "vastu_score": 100, "notes": "Highly auspicious. Brings overall prosperity."},
+    "rectangle": {"rating": "good", "vastu_score": 85, "notes": "Good, especially if ratio is 1:2. Brings stability."},
+    "l_shape": {"rating": "fair", "vastu_score": 55, "notes": "Considered incomplete. May cause missing corners issues."},
+    "t_shape": {"rating": "poor", "vastu_score": 50, "notes": "Avoid. Imbalance in energies."},
+    "irregular": {"rating": "poor", "vastu_score": 40, "notes": "Leads to instability and confusion."},
+    "triangular": {"rating": "avoid", "vastu_score": 20, "notes": "Causes loss and anxiety."}
+  },
+  "family_situations": {
+    "newly_married": {"priority_rooms": ["master_bedroom"], "special_advice": "Focus on the SW corner for marital harmony."},
+    "elderly_parents": {"priority_rooms": ["guest_bedroom", "puja_room"], "special_advice": "Ensure their room is in SW or S for peaceful rest."},
+    "young_children": {"priority_rooms": ["children_bedroom", "study_room"], "special_advice": "East and North areas must be open to foster growth and creativity."},
+    "joint_family": {"priority_rooms": ["living_room", "kitchen"], "special_advice": "Center of the house (Brahmasthan) should be completely open."},
+    "home_office": {"priority_rooms": ["home_office"], "special_advice": "Face North while working for financial growth."},
+    "business_owner": {"priority_rooms": ["master_bedroom", "main_entrance"], "special_advice": "Ensure North entrance for continuous wealth flow."}
+  },
+  "pancha_bhuta": {
+    "Earth": {"dirs": ["SW", "S"], "color": "#8D6E63", "balance_tip": "Add heavy furniture and square shapes.", "imbalance_effects": "Instability and financial issues."},
+    "Water": {"dirs": ["N", "NE"], "color": "#4DD0E1", "balance_tip": "Keep area open, light, and use wavy patterns.", "imbalance_effects": "Lack of opportunities and poor health."},
+    "Fire": {"dirs": ["SE"], "color": "#E57373", "balance_tip": "Use bright lights, triangular shapes, and warm colors.", "imbalance_effects": "Loss of passion and legal issues."},
+    "Air": {"dirs": ["NW", "E"], "color": "#DCE775", "balance_tip": "Ensure good ventilation, use circular shapes.", "imbalance_effects": "Depression and lack of support."},
+    "Space": {"dirs": ["CENTER", "W"], "color": "#90A4AE", "balance_tip": "Keep completely empty and clutter-free.", "imbalance_effects": "Confusion and lack of clarity."}
+  }
+}
