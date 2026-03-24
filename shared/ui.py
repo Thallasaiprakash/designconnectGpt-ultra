@@ -91,14 +91,5 @@ def gold_card(content_html: str):
 def section_title(text: str):
     st.markdown(f'<p style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#6B8099;margin:18px 0 8px">{text}</p>', unsafe_allow_html=True)
 
-def model_selector():
-    with st.sidebar:
-        st.markdown("### 🤖 AI Model")
-        model_choice = st.radio(
-            "Select Engine",
-            ["Gemini 2.5 Flash", "ChatGPT (GPT-4o)"],
-            index=0 if st.session_state.get('model_choice') == "Gemini 2.5 Flash" else 1 if st.session_state.get('model_choice') == "ChatGPT (GPT-4o)" else 0,
-            key="model_selector_radio"
-        )
-        st.session_state.model_choice = model_choice
-        st.markdown("---")
+
+# Model selector removed as per user request to use OpenAI exclusively.

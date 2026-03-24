@@ -46,10 +46,20 @@ def ask_chatgpt(prompt: str, system: str = None, model: str = "gpt-4o", expect_j
                 
             return content
         except Exception as e:
-            if "rate_limit" in str(e).lower() and attempt < 2:
+            err_str = str(e).lower()
+            if "rate_limit" in err_str and attempt < 2:
                 time.sleep(2)
                 continue
-            return json.dumps({"error": str(e)}) if expect_json else f"Error: {e}"
+            
+            # Specific handling for auth/key errors
+            if "401" in err_str or "auth" in err_str:
+                error_msg = "Error: Invalid OpenAI API Key. Please check your .env or Streamlit Secrets."
+            elif "400" in err_str or "expired" in err_str or "billing" in err_str:
+                error_msg = "Error: OpenAI API Key expired, limit reached, or billing issue. Please renew your OpenAI subscription."
+            else:
+                error_msg = f"Error: {e}"
+                
+            return json.dumps({"error": error_msg}) if expect_json else error_msg
 
 def ask_chatgpt_with_image(prompt: str, image_bytes: bytes, model: str = "gpt-4o", mime: str = "image/jpeg") -> str:
     if not client:
@@ -80,7 +90,13 @@ def ask_chatgpt_with_image(prompt: str, image_bytes: bytes, model: str = "gpt-4o
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            if "rate_limit" in str(e).lower() and attempt < 2:
+            err_str = str(e).lower()
+            if "rate_limit" in err_str and attempt < 2:
                 time.sleep(2)
                 continue
+            
+            if "401" in err_str or "auth" in err_str:
+                return "Error: Invalid OpenAI API Key."
+            elif "400" in err_str or "expired" in err_str or "billing" in err_str:
+                return "Error: OpenAI API Key expired or billing issue. Please renew."
             return f"Error: {e}"

@@ -11,8 +11,6 @@ inject_css()
 
 with st.sidebar:
     st.markdown('<div style="text-align:center;padding:20px 0 10px"><span style="font-size:32px">🕉</span><br><span style="font-family:Cormorant Garamond,serif;color:#C9A84C;font-size:18px;font-weight:600">DesignConnectGPT</span><br><span style="font-size:11px;color:#6B8099">ULTRA</span></div>', unsafe_allow_html=True)
-    from shared.ui import model_selector
-    model_selector()
     st.markdown('<hr style="border-color:rgba(201,168,76,0.15)">', unsafe_allow_html=True)
 
 st.markdown('<h1 style="font-family:Cormorant Garamond,serif;text-align:center;color:#F5EDD6;font-size:3rem;font-weight:600">DesignConnect<span style="color:#C9A84C">GPT</span> ULTRA</h1>', unsafe_allow_html=True)
