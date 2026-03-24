@@ -151,38 +151,45 @@ elif st.session_state.active_mode == "image_to_render":
         user_inst = st.text_area("Additional specific instructions", placeholder="e.g., 'Do not change anything from the input, just make it photorealistic. Floor should be white marble.'")
         
         if st.session_state.uploaded_design and st.button("Convert Design to Render", type="primary", use_container_width=True):
-            with st.spinner("👁️ AI Vision performing deep scan of layout and structural lines..."):
-                sys = "You are an elite architectural analyst with pixel-perfect spatial precision."
+            with st.spinner("👁️ AI Vision performing Structural Reconstruct (Grid-Based Scan)..."):
                 eval_p = """
-                Deeply analyze this interior design image. This is a reference layout that MUST BE PRESERVED 100% in geometry.
-                Extract: 
-                1) Room type 
-                2) EXACT Layout description — Provide coordinates or relative positions for walls, windows, doors, and furniture.
-                3) Structural details — moldings, paneling on walls, specific ceiling features.
-                4) Furniture — The exact type and placement of every item (sofa, TV, table, etc.).
-                5) Lighting source — Location of windows and artificial lights.
-                Return JSON format only with keys: room_type, spatial_geometry, wall_features, furniture_layout, lighting_points, designer_meta. 
-                Focus on the structural 'skeleton' of the design. No markdown wrappers.
+                ARCHITECTURAL ANALYSIS MISSION: 100% FIDELITY.
+                1. SPATIAL GRID: Divide the image into a 3x3 grid (TL, TC, TR, ML, MC, MR, BL, BC, BR).
+                2. SECTOR DESCRIPTION: For each sector, describe exactly what is visible (lines, furniture, windows).
+                3. WALL GEOMETRY: Describe the exact number, shape, and placement of wall panels/mouldings.
+                4. FURNITURE ANCHORS: State the exact position and orientation of the sofa, TV, table relative to the grid.
+                5. WINDOWS & LIGHT: Note the exact width and height of window frames and curtain placement.
+                
+                Return JSON format ONLY:
+                {
+                  "sector_grid": {"TL": "...", ...},
+                  "structural_moldings": "...",
+                  "furniture_coordinates": "...",
+                  "room_type": "...",
+                  "critical_lines": "..."
+                }
+                No markdown. Be robotic and precise.
                 """
                 analysis_raw = ask_ai_with_image(eval_p, st.session_state.uploaded_design)
                 
-            with st.spinner("🧠 Engineering high-fidelity photorealistic prompt... (Marble Floor priority)"):
+            with st.spinner("🧠 Engineering literal reconstruction prompt..."):
                 prompt2 = f"""
-                BASED ON THIS ARCHITECTURAL ANALYSIS: {analysis_raw}
-                INSTRUCTIONS: {user_inst}
+                MANDATORY BLUEPRINT DATA (JSON): {analysis_raw}
+                USER SPECIFIC RULES: {user_inst}
                 
-                MANDATORY RULE: PRESERVE THE EXACT SPATIAL LAYOUT AND GEOMETRY SHOWN IN THE ANALYSIS. DO NOT MOVE WALLS, WINDOWS, OR FURNITURE.
+                GOAL: RECONSTRUCT the exact scene described in the JSON. THIS IS NOT A CREATIVE MISSION.
+                1. CAMERA: Maintain the exact perspective and eye-level shown in the grid.
+                2. WALLS: Replicate the 'structural_moldings' EXACTLY. If it says 3 panels, render exactly 3 panels with the same spacing.
+                3. PLACEMENT: Place the TV, Sofa, and Window exactly where stated in the 'sector_grid'.
+                4. TEXTURES: Apply photorealistic materials (e.g., 'white marble floor', 'premium fabric sofa', 'oak wood cabinet').
+                5. LIGHTING: Follow the 'sector_grid' lighting sources.
                 
-                Create a photorealistic render prompt that:
-                1. REPLICATES the layout from the analysis with 100% precision.
-                2. If the user instructions mention 'Marble floor', ensure it is described as premium, high-gloss marble.
-                3. Upgrades all surfaces to photorealistic textures (8k resolution).
-                4. Matches the exact wall paneling and structural details from the input.
-                
-                Start with 'photorealistic interior design render,' end with '8K ultra-detailed, professional architectural photography, architectural digest style, premium quality finish'.
-                Write ONLY the prompt. Maximum 250 words.
+                PROMPT STYLE: Technical, literal, and detailed. 
+                Start with: 'Photorealistic technical architectural render of a [room_type]'
+                End with: '8K resolution, sharp structural lines, zero distortion, architectural photography, hyper-realistic textures'.
+                WRITE ONLY THE FINAL RENDER PROMPT.
                 """
-                final_prompt = ask_ai(prompt2, system="You are the ultimate high-fidelity staging AI. Your job is to RENDER the existing design, not RE-DESIGN it.")
+                final_prompt = ask_ai(prompt2, system="You are the world's most precise 3D rendering technician. You follow the blueprint 100% without adding or changing any furniture.")
                 
             with st.spinner("🎨 Rendering..."):
                 img_bytes = pollinations_render(final_prompt, width=render_width, height=render_height)
