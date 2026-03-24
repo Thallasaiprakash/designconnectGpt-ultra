@@ -1,5 +1,5 @@
 import openai
-import os, json, re, time
+import os, json, re, time, base64
 import streamlit as st
 from dotenv import load_dotenv
 
