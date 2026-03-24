@@ -148,34 +148,41 @@ elif st.session_state.active_mode == "image_to_render":
             st.image(st.session_state.uploaded_design, caption="Your Input Design", use_container_width=True)
     
     with c2:
-        target_style = st.selectbox("Target Style", DESIGN_STYLES)
-        target_lighting = st.selectbox("Lighting Mood", LIGHTING_MOODS)
-        user_inst = st.text_area("Additional specific instructions")
+        user_inst = st.text_area("Additional specific instructions", placeholder="e.g., 'Do not change anything from the input, just make it photorealistic. Floor should be white marble.'")
         
         if st.session_state.uploaded_design and st.button("Convert Design to Render", type="primary", use_container_width=True):
-            with st.spinner("👁️ AI Vision deeply analyzing layout and intent..."):
-                sys = "You are an expert architectural analyst with brilliant spatial reasoning."
+            with st.spinner("👁️ AI Vision performing deep scan of layout and structural lines..."):
+                sys = "You are an elite architectural analyst with pixel-perfect spatial precision."
                 eval_p = """
-                Analyze this interior design image. It could be a hand sketch, CAD drawing, 2D rendering, or rough concept on paper.
-                Extract: 1) Room type 2) Layout description — where are walls, doors, windows, major furniture 3) Design elements visible 4) Materials and finishes shown 5) Color scheme 6) Design style 7) Special features 8) What the designer INTENDED even if roughly sketched.
-                Return JSON format only with keys: room_type, layout, furniture, materials, colors, style, focal_point, designer_intent. No markdown wrappers.
+                Deeply analyze this interior design image. This is a reference layout that MUST BE PRESERVED 100% in geometry.
+                Extract: 
+                1) Room type 
+                2) EXACT Layout description — Provide coordinates or relative positions for walls, windows, doors, and furniture.
+                3) Structural details — moldings, paneling on walls, specific ceiling features.
+                4) Furniture — The exact type and placement of every item (sofa, TV, table, etc.).
+                5) Lighting source — Location of windows and artificial lights.
+                Return JSON format only with keys: room_type, spatial_geometry, wall_features, furniture_layout, lighting_points, designer_meta. 
+                Focus on the structural 'skeleton' of the design. No markdown wrappers.
                 """
                 analysis_raw = ask_ai_with_image(eval_p, st.session_state.uploaded_design)
                 
-            with st.spinner("🧠 Crafting faithful photorealistic prompt..."):
+            with st.spinner("🧠 Engineering high-fidelity photorealistic prompt... (Marble Floor priority)"):
                 prompt2 = f"""
-                Based on this interior design analysis: {analysis_raw}
-                Target style: {target_style}, Lighting: {target_lighting}
-                Additional instructions: {user_inst}
+                BASED ON THIS ARCHITECTURAL ANALYSIS: {analysis_raw}
+                INSTRUCTIONS: {user_inst}
+                
+                MANDATORY RULE: PRESERVE THE EXACT SPATIAL LAYOUT AND GEOMETRY SHOWN IN THE ANALYSIS. DO NOT MOVE WALLS, WINDOWS, OR FURNITURE.
+                
                 Create a photorealistic render prompt that:
-                1. FAITHFULLY reproduces the layout from the original design
-                2. Upgrades materials to photorealistic quality
-                3. Applies the target style while respecting original design intent
-                4. Shows space as it would look when fully built and staged
-                Start with 'photorealistic interior design render,' end with '8K ultra-detailed, architectural photography, Canon EOS R5, architectural digest style'
+                1. REPLICATES the layout from the analysis with 100% precision.
+                2. If the user instructions mention 'Marble floor', ensure it is described as premium, high-gloss marble.
+                3. Upgrades all surfaces to photorealistic textures (8k resolution).
+                4. Matches the exact wall paneling and structural details from the input.
+                
+                Start with 'photorealistic interior design render,' end with '8K ultra-detailed, professional architectural photography, architectural digest style, premium quality finish'.
                 Write ONLY the prompt. Maximum 250 words.
                 """
-                final_prompt = ask_ai(prompt2, system="You are the ultimate 3D staging AI.")
+                final_prompt = ask_ai(prompt2, system="You are the ultimate high-fidelity staging AI. Your job is to RENDER the existing design, not RE-DESIGN it.")
                 
             with st.spinner("🎨 Rendering..."):
                 img_bytes = pollinations_render(final_prompt, width=render_width, height=render_height)
