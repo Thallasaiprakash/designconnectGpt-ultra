@@ -151,45 +151,57 @@ elif st.session_state.active_mode == "image_to_render":
         user_inst = st.text_area("Additional specific instructions", placeholder="e.g., 'Do not change anything from the input, just make it photorealistic. Floor should be white marble.'")
         
         if st.session_state.uploaded_design and st.button("Convert Design to Render", type="primary", use_container_width=True):
-            with st.spinner("👁️ AI Vision performing Structural Reconstruct (Grid-Based Scan)..."):
+            with st.spinner("👁️ AI Vision performing Layered Structural Scan..."):
                 eval_p = """
-                ARCHITECTURAL ANALYSIS MISSION: 100% FIDELITY.
-                1. SPATIAL GRID: Divide the image into a 3x3 grid (TL, TC, TR, ML, MC, MR, BL, BC, BR).
-                2. SECTOR DESCRIPTION: For each sector, describe exactly what is visible (lines, furniture, windows).
-                3. WALL GEOMETRY: Describe the exact number, shape, and placement of wall panels/mouldings.
-                4. FURNITURE ANCHORS: State the exact position and orientation of the sofa, TV, table relative to the grid.
-                5. WINDOWS & LIGHT: Note the exact width and height of window frames and curtain placement.
+                ARCHITECTURAL MISSION: 100% SPATIAL REPRODUCTION.
+                Analyze the image as a series of LAYERS:
                 
-                Return JSON format ONLY:
-                {
-                  "sector_grid": {"TL": "...", ...},
-                  "structural_moldings": "...",
-                  "furniture_coordinates": "...",
-                  "room_type": "...",
-                  "critical_lines": "..."
-                }
-                No markdown. Be robotic and precise.
+                LAYER 1 (STRUCTURE): 
+                - Walls, ceiling height, and window positions. 
+                - Identify the exact width and height of the window on the right.
+                
+                LAYER 2 (FIXED ELEMENTS):
+                - Wall paneling/moldings (describe the exact arrangement, e.g., 'Three vertical rectangular panels behind the sofa').
+                - TV Unit/Floating Cabinet (describe its length and position on the left wall).
+                
+                LAYER 3 (FURNITURE & OBJECTS):
+                - Sofa (type and orientation).
+                - TV (size and height on the wall).
+                - Coffee table (shape and position).
+                
+                LAYER 4 (PERSPECTIVE):
+                - Describe the camera's eye-level and focal point.
+                
+                MANDATORY: If you see a logo or circular mark on the wall, DO NOT assume it is a clock unless it has numbers. 
+                Return JSON ONLY with keys: layer_1_structure, layer_2_fixed, layer_3_furniture, layer_4_perspective, room_type.
                 """
                 analysis_raw = ask_ai_with_image(eval_p, st.session_state.uploaded_design)
                 
-            with st.spinner("🧠 Engineering literal reconstruction prompt..."):
+            with st.expander("🔍 What AI detected in your design"):
+                try:
+                    analysis_json = json.loads(analysis_raw)
+                    st.json(analysis_json)
+                except:
+                    st.write(analysis_raw)
+                
+            with st.spinner("🧠 Engineering Layered Reconstruction Prompt..."):
                 prompt2 = f"""
-                MANDATORY BLUEPRINT DATA (JSON): {analysis_raw}
+                MANDATORY BLUEPRINT (LAYERED DATA): {analysis_raw}
                 USER SPECIFIC RULES: {user_inst}
                 
-                GOAL: RECONSTRUCT the exact scene described in the JSON. THIS IS NOT A CREATIVE MISSION.
-                1. CAMERA: Maintain the exact perspective and eye-level shown in the grid.
-                2. WALLS: Replicate the 'structural_moldings' EXACTLY. If it says 3 panels, render exactly 3 panels with the same spacing.
-                3. PLACEMENT: Place the TV, Sofa, and Window exactly where stated in the 'sector_grid'.
-                4. TEXTURES: Apply photorealistic materials (e.g., 'white marble floor', 'premium fabric sofa', 'oak wood cabinet').
-                5. LIGHTING: Follow the 'sector_grid' lighting sources.
+                STRICT RECONSTRUCTION INSTRUCTIONS:
+                1. MAPPING: You are a 3D engine rendering a fixed scene. Do not move any objects.
+                2. LAYER 1: Replicate the room structure and windows exactly as described.
+                3. LAYER 2: Carve the exact wall moldings/panels into the wall. If there are 3 panels, there must be 3 panels.
+                4. LAYER 3: Place the TV, Sofa, and Table in the exact positions relative to the walls.
+                5. ANTI-HALLUCINATION: Do not add clocks, chandeliers, or extra furniture. 
+                6. MATERIALS: If the user mentioned 'Marble floor', use high-gloss premium marble.
                 
-                PROMPT STYLE: Technical, literal, and detailed. 
-                Start with: 'Photorealistic technical architectural render of a [room_type]'
-                End with: '8K resolution, sharp structural lines, zero distortion, architectural photography, hyper-realistic textures'.
-                WRITE ONLY THE FINAL RENDER PROMPT.
+                PROMPT START: 'A तकनीकी architectural render with mathematical precision of a [room_type]...'
+                PROMPT END: '...exact geometric parity, professional 8k render, no extra items, realistic textures, sharp edges'.
+                WRITE ONLY THE FINAL PROMPT.
                 """
-                final_prompt = ask_ai(prompt2, system="You are the world's most precise 3D rendering technician. You follow the blueprint 100% without adding or changing any furniture.")
+                final_prompt = ask_ai(prompt2, system="You are a 3D Modeler following a strict blueprint. You do not change the design.")
                 
             with st.spinner("🎨 Rendering..."):
                 img_bytes = pollinations_render(final_prompt, width=render_width, height=render_height)
