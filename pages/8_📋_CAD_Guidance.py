@@ -3,7 +3,7 @@ import json
 import io
 import ezdxf
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.gemini_client import ask_gemini
+from shared.ai_client import ask_ai
 
 st.set_page_config(page_title="CAD Drafting & DXF", layout="wide", page_icon="📋")
 inject_css()
@@ -51,9 +51,9 @@ with tab1:
               "reference_standards": ["IS codes"]
             }}
             """
-            res = ask_gemini(prompt, expect_json=True)
+            res = ask_ai(prompt, expect_json=True)
             if res.startswith("Error:"):
-                st.error(f"API Error during CAD guide generation: {res}\n\nPlease wait 60 seconds for the free tier limit to reset.")
+                st.error(f"API Error during CAD guide generation: {res}")
                 st.session_state.cad_guide = None
             else:
                 try:

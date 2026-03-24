@@ -5,7 +5,7 @@ import io
 import random
 from urllib.parse import quote
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.gemini_client import ask_gemini, ask_gemini_with_image
+from shared.ai_client import ask_ai, ask_ai_with_image
 
 st.set_page_config(page_title="Room Staging AI", layout="wide", page_icon="🏠")
 inject_css()
@@ -19,7 +19,7 @@ BUDGET_LEVELS = ["Budget Friendly", "Mid Range", "Premium", "Luxury"]
 
 def safe_pollinations_render(prompt, width=768, height=512):
     if prompt.startswith("Error:"):
-        st.error(f"Gemini API Error: {prompt}")
+        st.error(f"AI API Error: {prompt}")
         return None
     seed = random.randint(1000, 9999)
     encoded = quote(prompt)
@@ -72,7 +72,7 @@ if st.session_state.staging_original:
     
     with c2:
         if not st.session_state.room_analysis:
-            with st.spinner("👁️ Gemini Vision analyzing room structure and issues..."):
+            with st.spinner("👁️ AI Vision analyzing room structure and issues..."):
                 prompt = """Analyze this interior room photo. Identify: 
                 1) Room type 
                 2) Current design style 
@@ -80,7 +80,7 @@ if st.session_state.staging_original:
                 4) Design issues from a professional perspective (clutter, poor lighting, outdated, empty, etc.)
                 5) Materials currently visible. 
                 Return strictly JSON: {"room_type": "...", "current_style": "...", "size": "...", "issues": "...", "materials": "..."}"""
-                raw_json = ask_gemini_with_image(prompt, st.session_state.staging_original)
+                raw_json = ask_ai_with_image(prompt, st.session_state.staging_original)
                 
                 try:
                     import re
@@ -135,7 +135,7 @@ if st.session_state.staging_original:
                 # Automatically generate pitch description
                 with st.spinner("✍️ Writing professional pitch..."):
                     pitch_prompt = f"Write a 3-sentence professional interior design description of this newly staged {new_style} {rt} featuring a {color_scheme} palette built for a {budget_level} budget. Make it sell the dream to a client. No marketing fluff, just elegant design talk."
-                    st.session_state.last_description = ask_gemini(pitch_prompt)
+                    st.session_state.last_description = ask_ai(pitch_prompt)
 
 st.markdown("---")
 
@@ -169,4 +169,3 @@ if st.session_state.staging_result:
         st.session_state.staging_result = None
         st.session_state.last_description = None
         st.rerun()
-

@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from shared.ui import page_header, inject_css, section_title, GOLD, NAVY, DANGER, JADE, AMBER
-from shared.gemini_client import ask_gemini, ask_gemini_with_image
+from shared.ai_client import ask_ai, ask_ai_with_image
 from vastu_rules import check_vastu
 
 st.set_page_config(page_title="Vastu AI Checker", layout="wide", page_icon="🕉")
@@ -30,11 +30,11 @@ if "vastu_results" not in st.session_state: st.session_state.vastu_results = Non
 # Language Dicts
 L = {
     "en": {"title": "Vastu AI Checker", "subtitle": "200+ Rules · Directions · Remedies", "plot_details": "Plot & Client Details", "compass": "Compass Rose", "rooms": "Room Layout", "submit": "Analyze Vastu", "manual_tab": "Manual Entry", "upload_tab": "Upload Floor Plan", "summary": "Overall Summary", "priority": "Priority Fixes"},
-    "hi": {"title": "वास्तु एआई चेकर", "subtitle": "200+ नियम · दिशाएँ · उपाय", "plot_details": "प्लॉट और क्लाइंट विवरण", "compass": "दिशा सूचक यंत्र", "rooms": "कमरे का लेआउट", "submit": "वास्तु का विश्लेषण करें", "manual_tab": "मैनुअल एंट्री", "upload_tab": "फ्लोर प्लान अपलोड करें", "summary": "समग्र सारांश", "priority": "प्राथमिकता सुधार"},
+    "hi": {"title": "वास्तु एआई चेकर", "subtitle": "200+ नियम · दिशाएँ · उपाय", "plot_details": "प्लॉट और क्लाइंट विवरण", "compass": "दिशा सूचक यंत्र", "rooms": "कमरे का लेआउट", "submit": "वास्तु का विश्लेषण करें", "manual_tab": "मैनुअल एंट्री", "upload_tab": "फ्लोर प्लान अपलोड करें", "summary": "समग्र साराংশ", "priority": "प्राथमिकता सुधार"},
     "te": {"title": "వాస్తు ఏఐ చెకర్", "subtitle": "200+ నియమాలు · దిశలు · పరిహారాలు", "plot_details": "ప్లాట్ & క్లయింట్ వివరాలు", "compass": "కంపాస్", "rooms": "గదుల అమరిక", "submit": "వాస్తును విశ్లేషించండి", "manual_tab": "మాన్యువల్ ఎంట్రీ", "upload_tab": "ఫ్లోర్ ప్లాన్ అప్‌లోడ్", "summary": "సమగ్ర సారాంశం", "priority": "ముఖ్యమైన మార్పులు"},
     "ta": {"title": "வாஸ்து AI செக்கர்", "subtitle": "200+ விதிகள் · திசைகள் · பரிகாரங்கள்", "plot_details": "பிளாட் & கிளையண்ட் விவரங்கள்", "compass": "திசைகாட்டி", "rooms": "அறை அமைப்பு", "submit": "வாஸ்துவை பகுப்பாய்வு செய்", "manual_tab": "கையேடு உள்ளீடு", "upload_tab": "மாடி திட்டத்தை பதிவேற்றுக", "summary": "ஒட்டுமொத்த சுருக்கம்", "priority": "முக்கிய திருத்தங்கள்"},
     "kn": {"title": "ವಾಸ್ತು AI ಪರಿಶೀಲಕ", "subtitle": "200+ ನಿಯಮಗಳು · ದಿಕ್ಕುಗಳು · ಜ್ಯೋತಿಷ್ಯ", "plot_details": "ಪ್ಲಾಟ್ ಹಾಗೂ ಗ್ರಾಹಕರ ವಿವರ", "compass": "ದಿಕ್ಸೂಚಿ", "rooms": "ಕೋಣೆಗಳ ವಿನ್ಯಾಸ", "submit": "ವಾಸ್ತು ವಿಶ್ಲೇಷಿಸಿ", "manual_tab": "ಮ್ಯಾನುವಲ್ ಎಂಟ್ರಿ", "upload_tab": "ಫ್ಲೋರ್ ಪ್ಲಾನ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ", "summary": "ಒಟ್ಟಾರೆ ಸಾರಾಂಶ", "priority": "ಆದ್ಯತೆಯ ಪರಿಹಾರಗಳು"},
-    "ml": {"title": "വാസ്തു AI ചെക്കർ", "subtitle": "200+ നിയമങ്ങൾ · ദിശകൾ · പരിഹാരങ്ങൾ", "plot_details": "പ്ലോട്ട് & ക്ലയന്റ് വിവരങ്ങൾ", "compass": "വടക്കുനോക്കിയന്ത്രം", "rooms": "റൂം ലേഔട്ട്", "submit": "വാസ്തു വിശകലനം ചെയ്യുക", "manual_tab": "മാനുവൽ എൻട്രി", "upload_tab": "ഫ്ലോർ പ്ലാൻ അപ്‌ലോഡ് ചെയ്യുക", "summary": "മൊത്തത്തിലുള്ള സംഗ്രഹം", "priority": "മുൻഗണനാ പരിഹാരങ്ങൾ"}
+    "ml": {"title": "ವಾಸ್ತು AI ചെക്കർ", "subtitle": "200+ നിയമങ്ങൾ · ദിശകൾ · പരിഹാരങ്ങൾ", "plot_details": "പ്ലോട്ട് & ക്ലയന്റ് വിവരങ്ങൾ", "compass": "വടക്കുനോക്കിയന്ത്രം", "rooms": "റൂം ലേഔട്ട്", "submit": "വാസ്തു വിശകലനം ചെയ്യുക", "manual_tab": "മാനുവൽ എൻട്രി", "upload_tab": "ഫ്ലോർ പ്ലാൻ അപ്‌ലോഡ് ചെയ്യുക", "summary": "മൊത്തത്തിലുള്ള സംഗ്രഹം", "priority": "മുൻഗണനാ പരിഹാരങ്ങൾ"}
 }
 t = L[st.session_state.lang]
 
@@ -79,7 +79,7 @@ You MUST return ONLY valid JSON matching this exact structure, with no markdown 
   "plot_shape": "rectangle",
   "family_sit": "nuclear_family"
 }"""
-                    resp = ask_gemini_with_image(prompt, img.getvalue(), mime=mime_type)
+                    resp = ask_ai_with_image(prompt, img.getvalue(), mime=mime_type)
                     with open("ai_raw_response.txt", "w", encoding="utf-8") as f:
                         f.write(resp)
                     
@@ -215,7 +215,7 @@ if st.session_state.get("run_vasthu_automagic", False) or locals().get("manual_s
             st.session_state.vastu_results = res
             st.rerun()
         
-        # Gemini call
+        # AI call
         lang_full = inverse_lang.get(st.session_state.lang, "English").split(" ")[0]
         
         if lang_full == "English":
@@ -242,7 +242,7 @@ Your tone should be authoritative yet warm, deeply spiritual, and structurally p
             "auspicious_note": "A final supreme blessing and positive reinforcement"
         }}
         """
-        ai_res = ask_gemini(report_req, system=sys_prompt, expect_json=True)
+        ai_res = ask_ai(report_req, system=sys_prompt, expect_json=True)
         try:
             res["ai_notes"] = json.loads(ai_res)
         except:

@@ -6,7 +6,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from shared.ui import page_header, inject_css, section_title, gold_card
-from shared.gemini_client import ask_gemini
+from shared.ai_client import ask_ai
 
 st.set_page_config(page_title="Client Profile AI", layout="wide", page_icon="🧠")
 inject_css()
@@ -169,7 +169,7 @@ elif st.session_state.cp_step == 8:
             }}
             """
             sys = "You are an elite AI Design Psychologist and NLP Sentiment Analyst. You use deep learning principles to decode human emotions, predicting hidden design preferences, behavioral red flags, and exact aesthetic desires with profound emotional intelligence to help architecture employees."
-            res = ask_gemini(prompt, system=sys, expect_json=True)
+            res = ask_ai(prompt, system=sys, expect_json=True)
             try:
                 data = json.loads(res)
                 is_valid = True
@@ -177,14 +177,14 @@ elif st.session_state.cp_step == 8:
                 is_valid = False
                 
             if not is_valid:
-                st.error("Failed to parse Gemini response.")
+                st.error("Failed to parse AI response.")
                 st.write(res)
                 if st.button("Retry", key="retry_btn_1"):
                     st.rerun()
                 st.stop()
                 
             if "error" in data:
-                st.error(f"🧠 AI API Error: {data['error']}\n\nDid you paste a valid Gemini API key in your `.env` file?")
+                st.error(f"🧠 AI API Error: {data['error']}")
                 if st.button("Retry", key="retry_btn_2"):
                     st.rerun()
                 st.stop()

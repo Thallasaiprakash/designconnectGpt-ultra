@@ -4,7 +4,7 @@ import io
 import openpyxl
 from openpyxl.styles import PatternFill, Font, Alignment
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.gemini_client import ask_gemini
+from shared.ai_client import ask_ai
 
 st.set_page_config(page_title="BOQ & Budget Estimator", layout="wide", page_icon="💰")
 inject_css()
@@ -54,14 +54,14 @@ if st.button("Generate BOQ and Estimate", type="primary", use_container_width=Tr
               "subtotal_inr": 0, "gst_18_percent": 0, "designer_fee_10_percent": 0, "contingency_5_percent": 0, "grand_total_inr": 0, "per_sqft_cost": 0,
               "budget_status": "Within budget 🔥" or "Over budget ⚠️" (if budget was provided, else N/A),
               "budget_saving_tips": ["tip1", "tip2", "tip3"],
-              "timeline_breakdown": [{{"phase": "design", "duration": "2 weeks", "activities": "plans"}}],
+              "timeline_breakdown": [{{"phase": "phase", "duration": "2 weeks", "activities": "plans"}}],
               "material_brands": ["brand1", "brand2", "brand3", "brand4", "brand5"]
             }}
             """
             
-            raw_res = ask_gemini(prompt, expect_json=True)
+            raw_res = ask_ai(prompt, expect_json=True)
             if raw_res.startswith("Error:"):
-                st.error(f"API Error during BOQ generation: {raw_res}\n\nPlease wait 60 seconds for the free tier limit to reset.")
+                st.error(f"API Error during BOQ generation: {raw_res}")
                 st.session_state.boq_result = None
             else:
                 try:

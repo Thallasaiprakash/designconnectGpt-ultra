@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import re
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.gemini_client import ask_gemini
+from shared.ai_client import ask_ai
 
 st.set_page_config(page_title="Space Planning Assistant", layout="wide", page_icon="📐")
 inject_css()
@@ -72,9 +72,9 @@ if st.button("Generate Space Plan", type="primary", use_container_width=True):
         }}
         """
         
-        raw_res = ask_gemini(prompt, expect_json=True)
+        raw_res = ask_ai(prompt, expect_json=True)
         if raw_res.startswith("Error:"):
-            st.error(f"API Error during Space Planning analysis: {raw_res}\n\nPlease wait 60 seconds for the free tier limit to reset.")
+            st.error(f"API Error during Space Planning analysis: {raw_res}")
             st.session_state.space_plan = None
         else:
             try:

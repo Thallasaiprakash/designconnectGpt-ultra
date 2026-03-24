@@ -8,7 +8,7 @@ from urllib.parse import quote
 from PIL import Image
 import base64
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.gemini_client import ask_gemini, ask_gemini_with_image
+from shared.ai_client import ask_ai, ask_ai_with_image
 
 st.set_page_config(page_title="Render Engine AI", layout="wide", page_icon="🎨")
 inject_css()
@@ -23,7 +23,7 @@ MATERIALS = ["Teak Wood", "White Oak", "Walnut", "Marble White", "Marble Black",
 
 def pollinations_render(prompt, width=768, height=512, seed=None):
     if prompt.startswith("Error:"):
-        st.error(f"Gemini AI Error: Could not generate rendering prompt due to a network or API issue.\n\nDetails: {prompt}")
+        st.error(f"AI Error: Could not generate rendering prompt due to a network or API issue.\n\nDetails: {prompt}")
         return None
     if seed is None: seed = random.randint(1000, 9999)
     encoded = quote(prompt)
@@ -120,7 +120,7 @@ if st.session_state.active_mode == "text_to_render":
             {vastu_txt}
             Write ONLY the prompt starting with 'photorealistic interior design render,' ending with '8K ultra-detailed, architectural photography, Canon EOS R5, architectural digest style, award-winning interior design'. Maximum 220 words.
             """
-            final_prompt = ask_gemini(prompt, system=sys)
+            final_prompt = ask_ai(prompt, system=sys)
             st.session_state.current_prompt = final_prompt
             
         with st.spinner("🎨 Rendering photorealistic image..."):
@@ -138,7 +138,7 @@ if st.session_state.active_mode == "text_to_render":
                 
                 if intern_mode:
                     with st.spinner("🎓 Generating Intern Explanations..."):
-                        ex = ask_gemini(f"Explain why these design choices work well together in 5 bullet points for an interior design intern: Room: {rt}, Style: {ds}, Mats: {mats}, Colors: {cp}.")
+                        ex = ask_ai(f"Explain why these design choices work well together in 5 bullet points for an interior design intern: Room: {rt}, Style: {ds}, Mats: {mats}, Colors: {cp}.")
                         st.info(f"**Intern Learning Note:**\n{ex}")
 
 # ================================
@@ -159,14 +159,14 @@ elif st.session_state.active_mode == "image_to_render":
         user_inst = st.text_area("Additional specific instructions")
         
         if st.session_state.uploaded_design and st.button("Convert Design to Render", type="primary", use_container_width=True):
-            with st.spinner("👁️ Gemini Vision deeply analyzing layout and intent..."):
+            with st.spinner("👁️ AI Vision deeply analyzing layout and intent..."):
                 sys = "You are an expert architectural analyst with brilliant spatial reasoning."
                 eval_p = """
                 Analyze this interior design image. It could be a hand sketch, CAD drawing, 2D rendering, or rough concept on paper.
                 Extract: 1) Room type 2) Layout description — where are walls, doors, windows, major furniture 3) Design elements visible 4) Materials and finishes shown 5) Color scheme 6) Design style 7) Special features 8) What the designer INTENDED even if roughly sketched.
                 Return JSON format only with keys: room_type, layout, furniture, materials, colors, style, focal_point, designer_intent. No markdown wrappers.
                 """
-                analysis_raw = ask_gemini_with_image(eval_p, st.session_state.uploaded_design)
+                analysis_raw = ask_ai_with_image(eval_p, st.session_state.uploaded_design)
                 
             with st.spinner("🧠 Crafting faithful photorealistic prompt..."):
                 prompt2 = f"""
@@ -181,7 +181,7 @@ elif st.session_state.active_mode == "image_to_render":
                 Start with 'photorealistic interior design render,' end with '8K ultra-detailed, architectural photography, Canon EOS R5, architectural digest style'
                 Write ONLY the prompt. Maximum 250 words.
                 """
-                final_prompt = ask_gemini(prompt2, system="You are the ultimate 3D staging AI.")
+                final_prompt = ask_ai(prompt2, system="You are the ultimate 3D staging AI.")
                 
             with st.spinner("🎨 Rendering..."):
                 img_bytes = pollinations_render(final_prompt, width=render_width, height=render_height)
@@ -202,7 +202,7 @@ elif st.session_state.active_mode == "image_to_render":
                             
                     if intern_mode:
                         with st.spinner("🎓 Generating Intern Explanations..."):
-                            ex = ask_gemini(f"Explain how AI interpreted the sketch and what was upgraded: {analysis_raw}")
+                            ex = ask_ai(f"Explain how AI interpreted the sketch and what was upgraded: {analysis_raw}")
                             st.info(f"**Intern Learning Note:**\n{ex}")
                             
                     st.download_button("💾 Download Render", data=img_bytes, file_name="ai_render.png", mime="image/png")
@@ -225,9 +225,9 @@ elif st.session_state.active_mode == "style_transfer":
     if st.session_state.reference_style_img and st.session_state.uploaded_design:
         if st.button("Transfer Style", type="primary", use_container_width=True):
             with st.spinner("👁️ Analyzing Reference Style..."):
-                style_analysis = ask_gemini_with_image("Describe ONLY the interior design style, materials, mood, lighting, and color palette of this image in dense keywords.", st.session_state.reference_style_img)
+                style_analysis = ask_ai_with_image("Describe ONLY the interior design style, materials, mood, lighting, and color palette of this image in dense keywords.", st.session_state.reference_style_img)
             with st.spinner("👁️ Analyzing Original Room Layout..."):
-                room_analysis = ask_gemini_with_image("Describe ONLY the structural layout, spatial volume, fixed elements (windows/doors), and primary furniture placement in this image.", st.session_state.uploaded_design)
+                room_analysis = ask_ai_with_image("Describe ONLY the structural layout, spatial volume, fixed elements (windows/doors), and primary furniture placement in this image.", st.session_state.uploaded_design)
             with st.spinner("🧠 Fusing concepts..."):
                 prompt = f"""
                 Create a Stable Diffusion prompt fusing these two inputs:
@@ -235,7 +235,7 @@ elif st.session_state.active_mode == "style_transfer":
                 Style and Mood to apply: {style_analysis}
                 Start with 'photorealistic interior design render,' end with '8K ultra-detailed, professional retouch'. Max 200 words.
                 """
-                final_prompt = ask_gemini(prompt)
+                final_prompt = ask_ai(prompt)
             with st.spinner("🎨 Rendering Transformed Room..."):
                 img_bytes = pollinations_render(final_prompt, width=render_width, height=render_height)
                 if img_bytes:
@@ -277,7 +277,7 @@ elif st.session_state.active_mode == "variations":
             Strategy: {var_type}.
             Return ONLY a JSON array of 4 strings. No markdown formatting. Example: ["prompt1", "prompt2", "prompt3", "prompt4"]
             """
-            res = ask_gemini(pr, system=sys, expect_json=True)
+            res = ask_ai(pr, system=sys, expect_json=True)
             try:
                 prompts = json.loads(res)
             except:
@@ -337,7 +337,7 @@ elif st.session_state.active_mode == "material_swap":
                     I want to swap out '{old_mat}' and replace it entirely with '{new_mat}'. {ext}.
                     Return ONLY the new modified prompt. Keep all other layout and architecture perfectly identical so it feels like the exact same room, just with a new material.
                     """
-                    new_p = ask_gemini(p)
+                    new_p = ask_ai(p)
                 with st.spinner("🎨 Rendering swap..."):
                     img_bytes = pollinations_render(new_p, width=render_width, height=render_height, seed=latest['metadata'].get('seed', random.randint(1000,9999)))
                     if img_bytes:
@@ -365,6 +365,7 @@ elif st.session_state.active_mode == "presentation":
         if len(opts) != 3 or not cn:
             st.warning("Please provide client name and exactly 3 options.")
         else:
+            from shared.ui import gold_card
             gold_card(f"<h2 style='text-align:center'>Design Presentation for {cn}</h2><p style='text-align:center'>{rt} | Budget: {budget}</p>")
             pack_results = []
             seeds = [2000, 3111, 4222]
@@ -381,7 +382,7 @@ elif st.session_state.active_mode == "presentation":
                             pack_results.append((opts[i], img))
                             add_to_history(img, p, "presentation", f"Opt {i+1}: {opts[i]}")
                             
-                            c_data = ask_gemini(f"Write a 2-sentence emotional client pitch, 3 highlight bullet points, and an estimated cost range in INR for this {budget} {rt} in {opts[i]} style.")
+                            c_data = ask_ai(f"Write a 2-sentence emotional client pitch, 3 highlight bullet points, and an estimated cost range in INR for this {budget} {rt} in {opts[i]} style.")
                             st.info(c_data)
                             st.download_button(f"💾 Download Option {i+1}", data=img, file_name=f"option_{i+1}.png", mime="image/png", key=f"dl_opt_{i}", use_container_width=True)
             
