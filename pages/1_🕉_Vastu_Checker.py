@@ -64,17 +64,21 @@ with st.container():
                 st.session_state.run_vasthu_automagic = False
                 with st.spinner("Step 1: Reading architecture, structural geometry, and extracting rooms..."):
                     mime_type = "application/pdf" if img.name.lower().endswith('.pdf') else "image/jpeg"
-                    prompt = """Analyze this architectural floor plan (could be multi-page).
+                    prompt = """You are a Grandmaster Architectural AI with advanced Computer Vision (OCR) capabilities.
+Analyze this floor plan meticulously.
 Critically important instructions:
-1. If no explicit compass or North arrow is found, ASSUME NORTH IS AT THE TOP OF THE PAGE.
-2. Identify all major rooms/zones. YOU MUST USE EXACTLY THESE KEYS for the rooms: 'master_bedroom', 'kitchen', 'puja_room', 'main_entrance', 'toilet_bathroom', 'living_room', 'staircase', 'children_bedroom', 'store_room', 'study_room', 'dining_room', 'guest_bedroom', 'home_office', 'garage'.
-3. Map every identified room to its accurate 8-directional compass zone (N, NE, E, SE, S, SW, W, NW) relative to the center of the house.
-4. Detect the main entrance/plot facing direction (N, E, S, W, NE, NW, SE, SW). If unsure, use the direction of 'main_entrance'.
-5. Detect the plot shape (square, rectangle, l_shape, irregular, circular).
-6. Guess the family configuration based on bedroom count (1-2 beds=nuclear_family, 3+ beds=joint_family or elderly_parents).
-You MUST return ONLY valid JSON matching this exact structure, with no markdown formatting or markdown ticks, just raw JSON:
+1. PERFORM OCR: Look for every text label in the image (e.g., 'BEDROOM', 'LIV/DIN', 'KITCHEN', 'TOILET', 'DRAWING').
+2. Identify all major rooms/zones based on these labels.
+3. MANDATORY ROOM KEYS: YOU MUST USE EXACTLY THESE KEYS for the rooms: 'master_bedroom', 'kitchen', 'puja_room', 'main_entrance', 'toilet_bathroom', 'living_room', 'staircase', 'children_bedroom', 'store_room', 'study_room', 'dining_room', 'guest_bedroom', 'home_office', 'garage'.
+4. ASSUME NORTH IS AT THE TOP OF THE PAGE if no compass is found.
+5. Map every identified room to its accurate 8-directional zone (N, NE, E, SE, S, SW, W, NW) based on its position relative to the center of the total built-up area.
+6. Detect the main entrance facing direction (N, E, S, W, NE, NW, SE, SW). If a label 'ENTRANCE' or 'MAIN DOOR' is found, use its direction.
+7. Detect the plot shape (square, rectangle, l_shape, irregular).
+8. Guess family configuration: 1-2 beds = nuclear_family, 3+ beds = joint_family.
+
+You MUST return ONLY valid JSON matching this exact structure (no markdown, just raw JSON):
 {
-  "rooms": {"master_bedroom": "SW", "kitchen": "SE", "living_room": "NE", "toilet_bathroom": "W"},
+  "rooms": {"master_bedroom": "SW", "kitchen": "SE", "living_room": "NE", "toilet_bathroom": "W", "dining_room": "CENTER"},
   "plot_facing": "E",
   "plot_shape": "rectangle",
   "family_sit": "nuclear_family"
@@ -115,12 +119,12 @@ You MUST return ONLY valid JSON matching this exact structure, with no markdown 
                                 if k_lower in valid_keys:
                                     cleaned_rooms[k_lower] = val
                                 else:
-                                    if any(w in k_lower for w in ['bed', 'sleep', 'bdr', 'room1', 'room2']):
+                                    if any(w in k_lower for w in ['bed', 'sleep', 'bdr', 'room1', 'room2', 'boom']):
                                         if 'master_bedroom' not in cleaned_rooms: cleaned_rooms['master_bedroom'] = val
                                         elif 'children_bedroom' not in cleaned_rooms: cleaned_rooms['children_bedroom'] = val
                                         else: cleaned_rooms['guest_bedroom'] = val
-                                    elif any(w in k_lower for w in ['din', 'eat', 'meals']): cleaned_rooms['dining_room'] = val
-                                    elif any(w in k_lower for w in ['liv', 'draw', 'hall', 'sit', 'lounge', 'family', 'tv']): cleaned_rooms['living_room'] = val
+                                    elif any(w in k_lower for w in ['din', 'eat', 'meals', 'liv']): cleaned_rooms['dining_room'] = val
+                                    elif any(w in k_lower for w in ['liv', 'draw', 'hall', 'sit', 'lounge', 'family', 'tv', 'din']): cleaned_rooms['living_room'] = val
                                     elif any(w in k_lower for w in ['bath', 'toil', 'wc', 'wash', 'rest', 'powder', 'latrine']): cleaned_rooms['toilet_bathroom'] = val
                                     elif any(w in k_lower for w in ['cook', 'kitch', 'kitvhen', 'pantry']): cleaned_rooms['kitchen'] = val
                                     elif any(w in k_lower for w in ['pooja', 'puja', 'temple', 'mandir', 'prayer', 'god']): cleaned_rooms['puja_room'] = val
