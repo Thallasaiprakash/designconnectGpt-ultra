@@ -187,7 +187,7 @@ elif st.session_state.active_mode == "image_to_render":
             with st.spinner("🎨 Rendering..."):
                 img_bytes = pollinations_render(final_prompt, width=render_width, height=render_height)
                 if img_bytes:
-                    add_to_history(img_bytes, final_prompt, "image_to_render", f"Sketch to {target_style}")
+                    add_to_history(img_bytes, final_prompt, "image_to_render", "Sketch to Render")
                     st.markdown("---")
                     r1, r2 = st.columns(2)
                     r1.markdown("**YOUR DESIGN INPUT**")
