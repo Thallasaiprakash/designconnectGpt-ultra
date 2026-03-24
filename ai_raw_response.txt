@@ -1,9 +1,16 @@
-Error: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
+```json
+{
+  "rooms": {
+    "master_bedroom": "NW",
+    "kitchen": "SE",
+    "living_room": "SW",
+    "toilet_bathroom": "W",
+    "guest_bedroom": "N",
+    "dining_room": "CENTER",
+    "children_bedroom": "S"
+  },
+  "plot_facing": "E",
+  "plot_shape": "rectangle",
+  "family_sit": "joint_family"
 }
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
+```

@@ -100,3 +100,21 @@ def ask_chatgpt_with_image(prompt: str, image_bytes: bytes, model: str = "gpt-4o
             elif "400" in err_str or "expired" in err_str or "billing" in err_str:
                 return "Error: OpenAI API Key expired or billing issue. Please renew."
             return f"Error: {e}"
+
+def generate_dalle_image(prompt: str, size: str = "1024x1024") -> bytes:
+    if not client:
+        return None
+    try:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=prompt,
+            size=size,
+            quality="standard",
+            n=1,
+            response_format="b64_json"
+        )
+        # Return image bytes
+        return base64.b64decode(response.data[0].b64_json)
+    except Exception as e:
+        st.error(f"DALL-E 3 Error: {e}")
+        return None

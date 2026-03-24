@@ -5,7 +5,7 @@ import io
 import random
 from urllib.parse import quote
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.ai_client import ask_ai, ask_ai_with_image
+from shared.ai_client import ask_ai, ask_ai_with_image, generate_image
 
 st.set_page_config(page_title="Room Staging AI", layout="wide", page_icon="🏠")
 inject_css()
@@ -17,30 +17,22 @@ COLOR_SCHEMES = ["Warm Neutrals", "Monochrome", "Earthy Tones", "Jewel Tones", "
 KEEP_OPTIONS = ["Window positions", "Room size/shape", "Flooring type", "Main walls", "Ceiling height", "Current Lighting Layout"]
 BUDGET_LEVELS = ["Budget Friendly", "Mid Range", "Premium", "Luxury"]
 
-def safe_pollinations_render(prompt, width=768, height=512):
+def safe_pollinations_render(prompt, width=1024, height=1024):
     if prompt.startswith("Error:"):
         st.error(f"AI API Error: {prompt}")
         return None
-    seed = random.randint(1000, 9999)
-    encoded = quote(prompt)
-    url = f"https://image.pollinations.ai/prompt/{encoded}?width={width}&height={height}&seed={seed}&nologo=True&model=flux"
+    
+    # Transitioned to DALL-E 3 for stability and high-end design quality
     try:
-        res = requests.get(url, timeout=90)
-        if res.status_code == 200:
-            try:
-                from PIL import Image
-                import io
-                img = Image.open(io.BytesIO(res.content))
-                img.load()
-                return res.content
-            except Exception:
-                st.error("Render Engine returned invalid or corrupted image data. The server might be overloaded, please try again.")
-                return None
+        # DALL-E 3 works best with 1024x1024 for floor plans and rooms
+        img_bytes = generate_image(prompt, size="1024x1024")
+        if img_bytes:
+            return img_bytes
         else:
-            st.error(f"API Error (Render Engine): {res.status_code}")
+            st.error("DALL-E 3 failed to generate the staged room. Check API key/billing.")
             return None
     except Exception as e:
-        st.error(f"Render network failed: {e}")
+        st.error(f"Render engine failed: {e}")
         return None
 
 # Session State

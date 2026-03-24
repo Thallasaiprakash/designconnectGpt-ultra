@@ -8,7 +8,7 @@ from urllib.parse import quote
 from PIL import Image
 import base64
 from shared.ui import page_header, inject_css, section_title, GOLD
-from shared.ai_client import ask_ai, ask_ai_with_image
+from shared.ai_client import ask_ai, ask_ai_with_image, generate_image
 
 st.set_page_config(page_title="Render Engine AI", layout="wide", page_icon="🎨")
 inject_css()
@@ -21,29 +21,23 @@ LIGHTING_MOODS = ["Bright & Airy Morning Light", "Warm Golden Hour Sunlight", "C
 CAMERA_ANGLES = ["Wide Hero Shot (Full Room)", "Eye-Level Perspective", "Low Angle (Heroic Furniture)", "High Angle (Layout View)", "Close-up Material Detail", "Symmetrical One-Point Perspective", "Looking through Doorway"]
 MATERIALS = ["Teak Wood", "White Oak", "Walnut", "Marble White", "Marble Black", "Rattan/Cane", "Velvet", "Linen", "Brass/Gold Metal", "Terracotta", "Ceramic", "Glass", "Leather", "Jute", "Bamboo", "Stone/Slate", "Mirror", "Fluted Glass", "Ribbed Wood Panels", "Exposed Brick", "Concrete", "Terrazzo", "Boucle Fabric", "Silk"]
 
-def pollinations_render(prompt, width=768, height=512, seed=None):
+def pollinations_render(prompt, width=1024, height=1024, seed=None):
     if prompt.startswith("Error:"):
         st.error(f"AI Error: Could not generate rendering prompt due to a network or API issue.\n\nDetails: {prompt}")
         return None
-    if seed is None: seed = random.randint(1000, 9999)
-    encoded = quote(prompt)
-    # Using image.pollinations.ai endpoint which is highly stable and free
-    url = f"https://image.pollinations.ai/prompt/{encoded}?width={width}&height={height}&seed={seed}&nologo=True&model=flux"
+    
+    # Transitioned to DALL-E 3 for "Pro" quality and to fix 404 errors with Pollinations
     try:
-        response = requests.get(url, timeout=90)
-        if response.status_code == 200: 
-            try:
-                img = Image.open(io.BytesIO(response.content))
-                img.load()
-                return response.content
-            except Exception:
-                st.error("Render Engine returned invalid or corrupted image data. The server might be overloaded, please try again.")
-                return None
+        size_str = f"{width}x{height}"
+        # DALL-E 3 only supports specific sizes, mapping to 1024x1024 for stability
+        img_bytes = generate_image(prompt, size="1024x1024")
+        if img_bytes:
+            return img_bytes
         else:
-            st.error(f"API Error (Render Engine): {response.status_code} - {response.text[:100]}...")
+            st.error("DALL-E 3 failed to generate the image. Please check your API key and billing.")
             return None
     except Exception as e:
-        st.error(f"Render network failed: {e}")
+        st.error(f"Render engine failed: {e}")
         return None
 
 def add_to_history(render_bytes, prompt, mode, label, metadata=None):
